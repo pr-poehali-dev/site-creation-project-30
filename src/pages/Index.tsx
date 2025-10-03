@@ -140,7 +140,19 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-cyan-50 to-yellow-50">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-cyan-50 to-yellow-50 relative overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none z-0 opacity-20">
+        <div className="absolute top-10 left-10 text-6xl animate-float" style={{ animationDelay: '0s' }}>👨‍🏫</div>
+        <div className="absolute top-32 right-20 text-5xl animate-float" style={{ animationDelay: '1s' }}>📚</div>
+        <div className="absolute top-60 left-1/4 text-4xl animate-float" style={{ animationDelay: '2s' }}>🎓</div>
+        <div className="absolute bottom-32 right-1/4 text-6xl animate-float" style={{ animationDelay: '0.5s' }}>🏫</div>
+        <div className="absolute top-1/3 right-10 text-5xl animate-float" style={{ animationDelay: '1.5s' }}>✏️</div>
+        <div className="absolute bottom-20 left-20 text-4xl animate-float" style={{ animationDelay: '2.5s' }}>📖</div>
+        <div className="absolute top-1/2 left-1/3 text-5xl animate-float" style={{ animationDelay: '3s' }}>💡</div>
+        <div className="absolute bottom-1/3 right-1/3 text-4xl animate-float" style={{ animationDelay: '1.8s' }}>🎯</div>
+        <div className="absolute top-20 right-1/3 text-6xl animate-float" style={{ animationDelay: '2.2s' }}>🌟</div>
+        <div className="absolute bottom-40 left-1/2 text-5xl animate-float" style={{ animationDelay: '0.8s' }}>🚀</div>
+      </div>
       <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 animate-fade-in">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
