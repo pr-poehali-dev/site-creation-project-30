@@ -1,9 +1,12 @@
 import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 
 const courses = [
@@ -59,6 +62,64 @@ const reviews = [
 export default function Index() {
   const [activeTab, setActiveTab] = useState('home');
   const [selectedCourse, setSelectedCourse] = useState<typeof courses[0] | null>(null);
+  const [enrollmentDialogOpen, setEnrollmentDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    student_name: '',
+    student_email: '',
+    phone: ''
+  });
+  const { toast } = useToast();
+
+  const handleEnroll = async () => {
+    if (!selectedCourse || !formData.student_name || !formData.student_email) {
+      toast({
+        title: 'Error',
+        description: 'Please fill in all required fields',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('https://functions.poehali.dev/ce49687f-e7fa-4d8f-a0db-c48ae8886108', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          student_name: formData.student_name,
+          student_email: formData.student_email,
+          phone: formData.phone,
+          course_id: selectedCourse.id,
+          course_title: selectedCourse.title
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        toast({
+          title: 'Success!',
+          description: `You have been enrolled in ${selectedCourse.title}`,
+        });
+        setEnrollmentDialogOpen(false);
+        setFormData({ student_name: '', student_email: '', phone: '' });
+      } else {
+        throw new Error(data.error || 'Enrollment failed');
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to enroll. Please try again.',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-cyan-50 to-yellow-50">

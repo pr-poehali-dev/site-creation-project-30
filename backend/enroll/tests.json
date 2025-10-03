@@ -1,0 +1,32 @@
+{
+  "tests": [
+    {
+      "name": "Enroll student in course",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "student_name": "Ivan Petrov",
+        "student_email": "ivan@example.com",
+        "phone": "+7 900 123 4567",
+        "course_id": 1,
+        "course_title": "Web Development Basics"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true,
+        "message": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get all enrollments",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
