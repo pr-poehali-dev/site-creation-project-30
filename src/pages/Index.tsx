@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { translations, Language } from '@/lib/translations';
 import { Button } from '@/components/ui/button';
@@ -88,6 +88,29 @@ export default function Index() {
 
   const t = translations[language];
   const courses = getCourses(language);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const elements = document.querySelectorAll('.scroll-animate, .scroll-animate-left, .scroll-animate-right, .scroll-animate-bounce');
+    elements.forEach((el) => observerRef.current?.observe(el));
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [activeTab, language]);
 
   const handleEnroll = async () => {
     if (!selectedCourse || !formData.student_name || !formData.student_email) {
@@ -232,7 +255,7 @@ export default function Index() {
             </section>
 
             <section className="grid md:grid-cols-3 gap-8">
-              <Card className="border-2 hover:shadow-2xl transition-all hover:-translate-y-2 duration-300">
+              <Card className="border-2 hover:shadow-2xl transition-all hover:-translate-y-2 duration-300 scroll-animate-left">
                 <CardHeader>
                   <div className="w-16 h-16 bg-gradient-to-br from-pink-400 to-orange-400 rounded-2xl flex items-center justify-center mb-4">
                     <Icon name="Video" className="text-white" size={32} />
@@ -244,7 +267,7 @@ export default function Index() {
                 </CardHeader>
               </Card>
 
-              <Card className="border-2 hover:shadow-2xl transition-all hover:-translate-y-2 duration-300">
+              <Card className="border-2 hover:shadow-2xl transition-all hover:-translate-y-2 duration-300 scroll-animate-bounce">
                 <CardHeader>
                   <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-400 rounded-2xl flex items-center justify-center mb-4">
                     <Icon name="Calendar" className="text-white" size={32} />
@@ -256,7 +279,7 @@ export default function Index() {
                 </CardHeader>
               </Card>
 
-              <Card className="border-2 hover:shadow-2xl transition-all hover:-translate-y-2 duration-300">
+              <Card className="border-2 hover:shadow-2xl transition-all hover:-translate-y-2 duration-300 scroll-animate-right">
                 <CardHeader>
                   <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-2xl flex items-center justify-center mb-4">
                     <Icon name="Award" className="text-white" size={32} />
@@ -284,8 +307,8 @@ export default function Index() {
               {courses.map((course, index) => (
                 <Card 
                   key={course.id} 
-                  className="overflow-hidden hover:shadow-2xl transition-all hover:-translate-y-2 duration-300 animate-scale-in"
-                  style={{ animationDelay: `${index * 100}ms` }}
+                  className="overflow-hidden hover:shadow-2xl transition-all hover:-translate-y-2 duration-300 scroll-animate"
+                  style={{ animationDelay: `${index * 150}ms` }}
                 >
                   <div className="relative h-48 overflow-hidden">
                     <img 
@@ -427,7 +450,7 @@ export default function Index() {
               <p className="text-xl text-gray-600">Plan your learning journey with our live sessions</p>
             </div>
             
-            <Card className="overflow-hidden">
+            <Card className="overflow-hidden scroll-animate">
               <CardContent className="p-0">
                 <div className="overflow-x-auto">
                   <table className="w-full">
@@ -443,8 +466,7 @@ export default function Index() {
                       {schedule.map((item, index) => (
                         <tr 
                           key={index} 
-                          className="border-b hover:bg-gray-50 transition-colors animate-fade-in"
-                          style={{ animationDelay: `${index * 50}ms` }}
+                          className="border-b hover:bg-gray-50 transition-colors"
                         >
                           <td className="px-6 py-4 font-medium">{item.day}</td>
                           <td className="px-6 py-4">
@@ -478,8 +500,7 @@ export default function Index() {
               {reviews.map((review, index) => (
                 <Card 
                   key={review.id} 
-                  className="hover:shadow-2xl transition-all hover:-translate-y-2 duration-300 animate-scale-in"
-                  style={{ animationDelay: `${index * 100}ms` }}
+                  className="hover:shadow-2xl transition-all hover:-translate-y-2 duration-300 scroll-animate-bounce"
                 >
                   <CardHeader>
                     <div className="flex items-center justify-between">

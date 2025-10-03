@@ -122,3 +122,73 @@
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.scroll-animate {
+  opacity: 0;
+}
+
+.scroll-animate.in-view {
+  animation: slide-in-up 0.6s ease-out forwards;
+}
+
+.scroll-animate-left.in-view {
+  animation: slide-in-left 0.8s ease-out forwards;
+}
+
+.scroll-animate-right.in-view {
+  animation: slide-in-right 0.8s ease-out forwards;
+}
+
+.scroll-animate-bounce.in-view {
+  animation: bounce-in 0.8s ease-out forwards;
+}
