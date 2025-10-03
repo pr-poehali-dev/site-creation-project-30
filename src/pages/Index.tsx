@@ -10,36 +10,36 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 
-const courses = [
+const getCourses = (lang: Language) => [
   {
     id: 1,
-    title: 'Web Development Basics',
-    description: 'Learn HTML, CSS, and JavaScript from scratch',
+    title: lang === 'en' ? 'Web Development Basics' : 'Основы Веб-Разработки',
+    description: lang === 'en' ? 'Learn HTML, CSS, and JavaScript from scratch' : 'Изучите HTML, CSS и JavaScript с нуля',
     image: '/img/dc989b8f-6997-4193-8c54-bed64786ef1a.jpg',
-    level: 'Beginner',
-    duration: '8 weeks',
+    level: lang === 'en' ? 'Beginner' : 'Начальный',
+    duration: lang === 'en' ? '8 weeks' : '8 недель',
     rating: 4.8,
     students: 1234,
     videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
   },
   {
     id: 2,
-    title: 'React Advanced Patterns',
-    description: 'Master modern React development techniques',
+    title: lang === 'en' ? 'React Advanced Patterns' : 'Продвинутые Паттерны React',
+    description: lang === 'en' ? 'Master modern React development techniques' : 'Освойте современные техники разработки на React',
     image: '/img/dc989b8f-6997-4193-8c54-bed64786ef1a.jpg',
-    level: 'Advanced',
-    duration: '6 weeks',
+    level: lang === 'en' ? 'Advanced' : 'Продвинутый',
+    duration: lang === 'en' ? '6 weeks' : '6 недель',
     rating: 4.9,
     students: 856,
     videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
   },
   {
     id: 3,
-    title: 'UI/UX Design Principles',
-    description: 'Create beautiful and functional user interfaces',
+    title: lang === 'en' ? 'UI/UX Design Principles' : 'Принципы UI/UX Дизайна',
+    description: lang === 'en' ? 'Create beautiful and functional user interfaces' : 'Создавайте красивые и функциональные интерфейсы',
     image: '/img/dc989b8f-6997-4193-8c54-bed64786ef1a.jpg',
-    level: 'Intermediate',
-    duration: '5 weeks',
+    level: lang === 'en' ? 'Intermediate' : 'Средний',
+    duration: lang === 'en' ? '5 weeks' : '5 недель',
     rating: 4.7,
     students: 2100,
     videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
@@ -87,12 +87,13 @@ export default function Index() {
   };
 
   const t = translations[language];
+  const courses = getCourses(language);
 
   const handleEnroll = async () => {
     if (!selectedCourse || !formData.student_name || !formData.student_email) {
       toast({
-        title: 'Error',
-        description: 'Please fill in all required fields',
+        title: t.enrollment.errorTitle,
+        description: t.enrollment.errorFields,
         variant: 'destructive'
       });
       return;
@@ -119,8 +120,8 @@ export default function Index() {
 
       if (response.ok && data.success) {
         toast({
-          title: 'Success!',
-          description: `You have been enrolled in ${selectedCourse.title}`,
+          title: t.enrollment.successTitle,
+          description: `${t.enrollment.successDesc} ${selectedCourse.title}`,
         });
         setEnrollmentDialogOpen(false);
         setFormData({ student_name: '', student_email: '', phone: '' });
@@ -129,8 +130,8 @@ export default function Index() {
       }
     } catch (error) {
       toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to enroll. Please try again.',
+        title: t.enrollment.errorTitle,
+        description: error instanceof Error ? error.message : t.enrollment.errorFailed,
         variant: 'destructive'
       });
     } finally {
@@ -262,9 +263,9 @@ export default function Index() {
           <div className="space-y-8 animate-fade-in">
             <div className="text-center space-y-4">
               <h2 className="text-4xl md:text-5xl font-bold bg-gradient-brand bg-clip-text text-transparent">
-                Our Courses
+                {t.courses.title}
               </h2>
-              <p className="text-xl text-gray-600">Choose from our selection of expert-led courses</p>
+              <p className="text-xl text-gray-600">{t.courses.subtitle}</p>
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -312,7 +313,7 @@ export default function Index() {
                           onClick={() => setSelectedCourse(course)}
                         >
                           <Icon name="Play" className="mr-2" size={18} />
-                          Watch Intro
+                          {t.courses.watchIntro}
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="max-w-4xl">
@@ -333,9 +334,68 @@ export default function Index() {
                         </div>
                         <div className="space-y-4">
                           <p className="text-gray-600">{course.description}</p>
-                          <Button className="w-full bg-gradient-brand text-white border-0 hover:opacity-90">
-                            Enroll Now
-                          </Button>
+                          <Dialog open={enrollmentDialogOpen} onOpenChange={setEnrollmentDialogOpen}>
+                            <DialogTrigger asChild>
+                              <Button 
+                                className="w-full bg-gradient-brand text-white border-0 hover:opacity-90"
+                                onClick={() => setSelectedCourse(course)}
+                              >
+                                {t.courses.enrollNow}
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-md">
+                              <DialogHeader>
+                                <DialogTitle className="text-2xl">{t.courses.enrollNow}</DialogTitle>
+                              </DialogHeader>
+                              <div className="space-y-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor="name">{t.enrollment.name}</Label>
+                                  <Input
+                                    id="name"
+                                    value={formData.student_name}
+                                    onChange={(e) => setFormData({ ...formData, student_name: e.target.value })}
+                                    placeholder={t.enrollment.name}
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="email">{t.enrollment.email}</Label>
+                                  <Input
+                                    id="email"
+                                    type="email"
+                                    value={formData.student_email}
+                                    onChange={(e) => setFormData({ ...formData, student_email: e.target.value })}
+                                    placeholder={t.enrollment.email}
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="phone">{t.enrollment.phone}</Label>
+                                  <Input
+                                    id="phone"
+                                    type="tel"
+                                    value={formData.phone}
+                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                    placeholder={t.enrollment.phone}
+                                  />
+                                </div>
+                                <div className="flex gap-3 pt-4">
+                                  <Button
+                                    variant="outline"
+                                    onClick={() => setEnrollmentDialogOpen(false)}
+                                    className="flex-1"
+                                  >
+                                    {t.enrollment.cancel}
+                                  </Button>
+                                  <Button
+                                    onClick={handleEnroll}
+                                    disabled={isSubmitting}
+                                    className="flex-1 bg-gradient-brand text-white border-0 hover:opacity-90"
+                                  >
+                                    {isSubmitting ? t.enrollment.submitting : t.enrollment.enroll}
+                                  </Button>
+                                </div>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
                         </div>
                       </DialogContent>
                     </Dialog>
