@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { translations, Language } from '@/lib/translations';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -64,12 +65,28 @@ export default function Index() {
   const [selectedCourse, setSelectedCourse] = useState<typeof courses[0] | null>(null);
   const [enrollmentDialogOpen, setEnrollmentDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [language, setLanguage] = useState<Language>('en');
   const [formData, setFormData] = useState({
     student_name: '',
     student_email: '',
     phone: ''
   });
   const { toast } = useToast();
+
+  useEffect(() => {
+    const savedLang = localStorage.getItem('language') as Language;
+    if (savedLang && (savedLang === 'en' || savedLang === 'ru')) {
+      setLanguage(savedLang);
+    }
+  }, []);
+
+  const toggleLanguage = () => {
+    const newLang: Language = language === 'en' ? 'ru' : 'en';
+    setLanguage(newLang);
+    localStorage.setItem('language', newLang);
+  };
+
+  const t = translations[language];
 
   const handleEnroll = async () => {
     if (!selectedCourse || !formData.student_name || !formData.student_email) {
@@ -139,30 +156,38 @@ export default function Index() {
                 onClick={() => setActiveTab('home')}
                 className={`font-medium transition-colors ${activeTab === 'home' ? 'text-primary' : 'text-gray-600 hover:text-primary'}`}
               >
-                Home
+                {t.nav.home}
               </button>
               <button
                 onClick={() => setActiveTab('schedule')}
                 className={`font-medium transition-colors ${activeTab === 'schedule' ? 'text-primary' : 'text-gray-600 hover:text-primary'}`}
               >
-                Schedule
+                {t.nav.schedule}
               </button>
               <button
                 onClick={() => setActiveTab('reviews')}
                 className={`font-medium transition-colors ${activeTab === 'reviews' ? 'text-primary' : 'text-gray-600 hover:text-primary'}`}
               >
-                Reviews
+                {t.nav.reviews}
               </button>
               <button
                 onClick={() => setActiveTab('courses')}
                 className={`font-medium transition-colors ${activeTab === 'courses' ? 'text-primary' : 'text-gray-600 hover:text-primary'}`}
               >
-                Courses
+                {t.nav.courses}
               </button>
             </div>
-            <Button className="bg-gradient-brand text-white border-0 hover:opacity-90 transition-opacity">
-              Get Started
-            </Button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={toggleLanguage}
+                className="px-3 py-1 rounded-lg border-2 border-primary/20 hover:border-primary hover:bg-primary/5 transition-all font-medium text-sm"
+              >
+                {language === 'en' ? '🇷🇺 RU' : '🇬🇧 EN'}
+              </button>
+              <Button className="bg-gradient-brand text-white border-0 hover:opacity-90 transition-opacity">
+                {t.nav.getStarted}
+              </Button>
+            </div>
           </div>
         </div>
       </nav>
@@ -172,10 +197,10 @@ export default function Index() {
           <div className="space-y-16 animate-fade-in">
             <section className="text-center space-y-6 py-20">
               <h1 className="text-5xl md:text-7xl font-bold bg-gradient-brand bg-clip-text text-transparent animate-scale-in">
-                Learn Without Limits
+                {t.hero.title}
               </h1>
               <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto">
-                Master new skills with interactive video lessons from world-class instructors
+                {t.hero.subtitle}
               </p>
               <div className="flex flex-wrap gap-4 justify-center pt-6">
                 <Button 
@@ -183,11 +208,11 @@ export default function Index() {
                   className="bg-gradient-brand text-white border-0 hover:opacity-90 transition-all hover:scale-105"
                   onClick={() => setActiveTab('courses')}
                 >
-                  Explore Courses
+                  {t.hero.exploreCourses}
                   <Icon name="ArrowRight" className="ml-2" size={20} />
                 </Button>
                 <Button size="lg" variant="outline" className="hover:scale-105 transition-all">
-                  Watch Demo
+                  {t.hero.watchDemo}
                   <Icon name="Play" className="ml-2" size={20} />
                 </Button>
               </div>
@@ -199,9 +224,9 @@ export default function Index() {
                   <div className="w-16 h-16 bg-gradient-to-br from-pink-400 to-orange-400 rounded-2xl flex items-center justify-center mb-4">
                     <Icon name="Video" className="text-white" size={32} />
                   </div>
-                  <CardTitle className="text-2xl">HD Video Lessons</CardTitle>
+                  <CardTitle className="text-2xl">{t.features.videoTitle}</CardTitle>
                   <CardDescription className="text-base">
-                    Watch high-quality video content anytime, anywhere
+                    {t.features.videoDesc}
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -211,9 +236,9 @@ export default function Index() {
                   <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-400 rounded-2xl flex items-center justify-center mb-4">
                     <Icon name="Calendar" className="text-white" size={32} />
                   </div>
-                  <CardTitle className="text-2xl">Flexible Schedule</CardTitle>
+                  <CardTitle className="text-2xl">{t.features.scheduleTitle}</CardTitle>
                   <CardDescription className="text-base">
-                    Learn at your own pace with our convenient timetable
+                    {t.features.scheduleDesc}
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -223,9 +248,9 @@ export default function Index() {
                   <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-2xl flex items-center justify-center mb-4">
                     <Icon name="Award" className="text-white" size={32} />
                   </div>
-                  <CardTitle className="text-2xl">Certificate</CardTitle>
+                  <CardTitle className="text-2xl">{t.features.certificateTitle}</CardTitle>
                   <CardDescription className="text-base">
-                    Get recognized with industry-standard certificates
+                    {t.features.certificateDesc}
                   </CardDescription>
                 </CardHeader>
               </Card>
